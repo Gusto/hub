@@ -90,9 +90,8 @@ module Hub
         abort "Aborted: no revision could be determined from '#{ref}'"
       end
 
-      all_statuses = api_client.statuses(project, sha)
-      ci_statuses = all_statuses.select { |s| s['context'].start_with? 'ci/' }
-      status = ci_statuses.first
+      statuses = api_client.statuses(project, sha)
+      status = statuses.find { |s| s['context'].start_with? 'ci/' }
       if status
         ref_state = status['state']
         ref_target_url = status['target_url']
