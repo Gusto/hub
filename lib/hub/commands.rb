@@ -90,8 +90,9 @@ module Hub
         abort "Aborted: no revision could be determined from '#{ref}'"
       end
 
-      statuses = api_client.statuses(project, sha)
-      status = statuses.first
+      all_statuses = api_client.statuses(project, sha)
+      ci_statuses = all_statuses.select { |s| s['context'].start_with? 'ci/' }
+      status = ci_statuses.first
       if status
         ref_state = status['state']
         ref_target_url = status['target_url']
@@ -279,7 +280,7 @@ module Hub
       config = JSON.parse(File.read('.hubconfig')) rescue nil
       if config.nil?
         puts "No .hubconfig found for this repository."
-        
+
         default_branch = ""
         until !default_branch.empty?
           puts "What is the default branch to land on for #{base_project.name}?"
@@ -319,7 +320,7 @@ module Hub
       end
 
       begin
-        pr = api_client.pullrequests base_project, head: "#{head_project.owner}:#{branch}" 
+        pr = api_client.pullrequests base_project, head: "#{head_project.owner}:#{branch}"
         pr = JSON.parse(pr).first
         if pr.nil?
           abort "Error: No pull request for branch #{branch}."
