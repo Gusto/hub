@@ -1,4 +1,4 @@
-Feature: hub create
+Feature: ghub create
   Background:
     Given I am in "dotfiles" git repo
     And I am "mislav" on github.com with OAuth token "OTOKEN"
@@ -11,7 +11,7 @@ Feature: hub create
         json :full_name => 'mislav/dotfiles'
       }
       """
-    When I successfully run `hub create`
+    When I successfully run `ghub create`
     Then the url for "origin" should be "git@github.com:mislav/dotfiles.git"
     And the output should contain exactly "created repository: mislav/dotfiles\n"
 
@@ -23,7 +23,7 @@ Feature: hub create
         json :full_name => 'mislav/dotfiles'
       }
       """
-    When I successfully run `hub create -p`
+    When I successfully run `ghub create -p`
     Then the url for "origin" should be "git@github.com:mislav/dotfiles.git"
 
   Scenario: HTTPS is preferred
@@ -34,7 +34,7 @@ Feature: hub create
       }
       """
     And HTTPS is preferred
-    When I successfully run `hub create`
+    When I successfully run `ghub create`
     Then the url for "origin" should be "https://github.com/mislav/dotfiles.git"
 
   Scenario: Create in organization
@@ -44,7 +44,7 @@ Feature: hub create
         json :full_name => 'acme/dotfiles'
       }
       """
-    When I successfully run `hub create acme/dotfiles`
+    When I successfully run `ghub create acme/dotfiles`
     Then the url for "origin" should be "git@github.com:acme/dotfiles.git"
     And the output should contain exactly "created repository: acme/dotfiles\n"
 
@@ -53,7 +53,7 @@ Feature: hub create
       """
       post('/user/repos') { status 500 }
       """
-    When I run `hub create`
+    When I run `ghub create`
     Then the stderr should contain "Error creating repository: Internal Server Error (HTTP 500)"
     And the exit status should be 1
     And there should be no "origin" remote
@@ -66,7 +66,7 @@ Feature: hub create
         json :full_name => 'mislav/myconfig'
       }
       """
-    When I successfully run `hub create myconfig`
+    When I successfully run `ghub create myconfig`
     Then the url for "origin" should be "git@github.com:mislav/myconfig.git"
 
   Scenario: With description and homepage
@@ -78,12 +78,12 @@ Feature: hub create
         json :full_name => 'mislav/dotfiles'
       }
       """
-    When I successfully run `hub create -d mydesc -h http://example.com`
+    When I successfully run `ghub create -d mydesc -h http://example.com`
     Then the url for "origin" should be "git@github.com:mislav/dotfiles.git"
 
   Scenario: Not in git repo
     Given the current dir is not a repo
-    When I run `hub create`
+    When I run `ghub create`
     Then the stderr should contain "'create' must be run from inside a git repository"
     And the exit status should be 1
 
@@ -95,7 +95,7 @@ Feature: hub create
       }
       """
     And the "origin" remote has url "git://github.com/mislav/dotfiles.git"
-    When I successfully run `hub create`
+    When I successfully run `ghub create`
     Then the url for "origin" should be "git://github.com/mislav/dotfiles.git"
 
   Scenario: GitHub repo already exists
@@ -103,7 +103,7 @@ Feature: hub create
       """
       get('/repos/mislav/dotfiles') { status 200 }
       """
-    When I successfully run `hub create`
+    When I successfully run `ghub create`
     Then the output should contain "mislav/dotfiles already exists on github.com\n"
     And the url for "origin" should be "git@github.com:mislav/dotfiles.git"
 
@@ -114,7 +114,7 @@ Feature: hub create
         json :full_name => 'Mooslav/myconfig'
       }
       """
-    When I successfully run `hub create`
+    When I successfully run `ghub create`
     Then the url for "origin" should be "git@github.com:Mooslav/myconfig.git"
     And the output should contain exactly "created repository: Mooslav/myconfig\n"
 
@@ -127,7 +127,7 @@ Feature: hub create
         json :full_name => 'mislav/my-dot-files'
       }
       """
-    When I successfully run `hub create`
+    When I successfully run `ghub create`
     Then the url for "origin" should be "git@github.com:mislav/my-dot-files.git"
 
   Scenario: Verbose API output
@@ -140,7 +140,7 @@ Feature: hub create
       }
       """
     And $HUB_VERBOSE is "on"
-    When I successfully run `hub create`
+    When I successfully run `ghub create`
     Then the stderr should contain:
       """
       > GET https://api.github.com/repos/mislav/dotfiles

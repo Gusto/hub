@@ -2,10 +2,10 @@ require 'helper'
 
 class ContextTest < Minitest::Test
   class Context
-    include Hub::Context
+    include GHub::Context
 
     def initialize(&block)
-      @git_reader = Hub::Context::GitReader.new('git', &block)
+      @git_reader = GHub::Context::GitReader.new('git', &block)
     end
 
     public :git_editor

@@ -1,13 +1,13 @@
 # encoding: utf-8
-require File.expand_path('../lib/hub/version', __FILE__)
+require File.expand_path('../lib/ghub/version', __FILE__)
 
 Gem::Specification.new do |s|
-  s.name              = "hub"
-  s.version           = Hub::VERSION
-  s.summary           = "Command-line wrapper for git and GitHub"
-  s.homepage          = "http://hub.github.com/"
-  s.email             = "mislav.marohnic@gmail.com"
-  s.authors           = [ "Chris Wanstrath", "Mislav Marohnić" ]
+  s.name              = "ghub"
+  s.version           = GHub::VERSION
+  s.summary           = "Gusto's Command-line wrapper for git and GitHub"
+  s.homepage          = "http://github.com/gusto/ghub/"
+  s.email             = "dev@gusto.com"
+  s.authors           = [ "The Gusto Dev Team" ]
   s.license           = "MIT"
 
   s.files             = %w( README.md Rakefile LICENSE )
@@ -21,15 +21,15 @@ Gem::Specification.new do |s|
     s.files &= `git --git-dir='#{git_dir}' ls-files -z`.split("\0")
   end
 
-  s.executables       = %w( hub )
+  s.executables       = %w( ghub )
   s.description       = <<desc
-  `hub` is a command line utility which adds GitHub knowledge to `git`.
+  `ghub` is a command line utility which adds GitHub knowledge to `git`.
 
   It can used on its own or as a `git` wrapper.
 
   Normal:
 
-      $ hub clone rtomayko/tilt
+      $ ghub clone rtomayko/tilt
 
       Expands to:
       $ git clone git://github.com/rtomayko/tilt.git
@@ -50,11 +50,11 @@ desc
                   =======================
 
        If you are a heavy user of `git` on the command
-       line  you  may  want  to  install `hub` the old
+       line  you  may  want  to  install `ghub` the old
        fashioned way.  Faster  startup  time,  you see.
 
        Check  out  the  installation  instructions  at
-       https://github.com/github/hub#readme  under the
+       https://github.com/github/ghub#readme  under the
        "Standalone" section.
 
        Cheers,

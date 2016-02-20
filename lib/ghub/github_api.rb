@@ -1,6 +1,6 @@
 require 'forwardable'
 
-module Hub
+module GHub
   # Client for the GitHub v3 API.
   #
   # First time around, user gets prompted for username/password in the shell.
@@ -287,7 +287,7 @@ module Hub
           create_connection host_url
         end
 
-        req['User-Agent'] = "Hub #{Hub::VERSION}"
+        req['User-Agent'] = "GHub #{GHub::VERSION}"
         apply_authentication(req, url)
         yield req if block_given?
         finalize_request(req, url)

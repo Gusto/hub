@@ -12,10 +12,10 @@ require 'fileutils'
 require 'rspec/expectations'
 require 'pathname'
 
-tmpdir = Pathname.new(ENV.fetch('TMPDIR', '/tmp')) + 'hub-test'
+tmpdir = Pathname.new(ENV.fetch('TMPDIR', '/tmp')) + 'ghub-test'
 cpldir = tmpdir + 'completion'
-zsh_completion = File.expand_path('../../../etc/hub.zsh_completion', __FILE__)
-bash_completion = File.expand_path('../../../etc/hub.bash_completion.sh', __FILE__)
+zsh_completion = File.expand_path('../../../etc/ghub.zsh_completion', __FILE__)
+bash_completion = File.expand_path('../../../etc/ghub.bash_completion.sh', __FILE__)
 
 _git_prefix = nil
 
@@ -59,7 +59,7 @@ setup_tmp_home = lambda { |shell|
           fpath=(${fpath#\$site_fn})
         done
         fpath=('#{cpldir}' $fpath)
-        alias git=hub
+        alias git=ghub
         autoload -U compinit
         compinit -i
       SH
@@ -68,7 +68,7 @@ setup_tmp_home = lambda { |shell|
     File.open(File.join(tmpdir, '.bashrc'), 'w') do |bashrc|
       bashrc.write <<-SH
         PS1='$ '
-        alias git=hub
+        alias git=ghub
         . '#{git_distributed_bash_completion.call}'
         . '#{bash_completion}'
       SH
@@ -80,8 +80,8 @@ $tmux = nil
 
 Before('@completion') do
   unless $tmux
-    $tmux = %w[tmux -L hub-test]
-    system(*($tmux + %w[new-session -ds hub]))
+    $tmux = %w[tmux -L ghub-test]
+    system(*($tmux + %w[new-session -ds ghub]))
     at_exit do
       system(*($tmux + %w[kill-server]))
     end

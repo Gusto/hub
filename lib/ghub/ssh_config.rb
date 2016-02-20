@@ -1,4 +1,4 @@
-module Hub
+module GHub
   # Reads ssh_config(5) files and records "Host" to "HostName" mappings to
   # provide resolving of ssh aliases.
   class SshConfig

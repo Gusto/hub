@@ -1,11 +1,11 @@
-Feature: hub apply
+Feature: ghub apply
   Background:
     Given I am in "git://github.com/mislav/dotfiles.git" git repo
     And I am "mislav" on github.com with OAuth token "OTOKEN"
     And I make a commit
 
   Scenario: Apply a local patch
-    When I run `hub apply some.patch`
+    When I run `ghub apply some.patch`
     Then the git command should be unchanged
     And the file "README.md" should not exist
 
@@ -17,7 +17,7 @@ Feature: hub apply
         generate_patch "Create a README"
       }
       """
-    When I successfully run `hub apply -3 https://github.com/mislav/dotfiles/pull/387`
+    When I successfully run `ghub apply -3 https://github.com/mislav/dotfiles/pull/387`
     Then there should be no output
     Then a file named "README.md" should exist
 
@@ -30,7 +30,7 @@ Feature: hub apply
         generate_patch "Create a README"
       }
       """
-    When I successfully run `hub apply https://github.com/mislav/dotfiles/pull/387`
+    When I successfully run `ghub apply https://github.com/mislav/dotfiles/pull/387`
     Then a file named "README.md" should exist
 
   Scenario: Enterprise repo
@@ -44,7 +44,7 @@ Feature: hub apply
         generate_patch "Create a README"
       }
       """
-    When I successfully run `hub apply https://git.my.org/mislav/dotfiles/pull/387`
+    When I successfully run `ghub apply https://git.my.org/mislav/dotfiles/pull/387`
     Then a file named "README.md" should exist
 
   Scenario: Apply patch from commit
@@ -55,7 +55,7 @@ Feature: hub apply
         generate_patch "Create a README"
       }
       """
-    When I successfully run `hub apply https://github.com/davidbalbert/dotfiles/commit/fdb9921`
+    When I successfully run `ghub apply https://github.com/davidbalbert/dotfiles/commit/fdb9921`
     Then a file named "README.md" should exist
 
   Scenario: Apply patch from gist
@@ -73,5 +73,5 @@ Feature: hub apply
         generate_patch "Create a README"
       }
       """
-    When I successfully run `hub apply https://gist.github.com/8da7fb575debd88c54cf`
+    When I successfully run `ghub apply https://gist.github.com/8da7fb575debd88c54cf`
     Then a file named "README.md" should exist

@@ -22,15 +22,15 @@ Feature: OAuth authentication
         json :full_name => 'mislav/dotfiles'
       }
       """
-    When I run `hub create` interactively
+    When I run `ghub create` interactively
     When I type "mislav"
     And I type "kitty"
     Then the output should contain "github.com username:"
     And the output should contain "github.com password for mislav (never stored):"
     And the exit status should be 0
-    And the file "../home/.config/hub" should contain "user: MiSlAv"
-    And the file "../home/.config/hub" should contain "oauth_token: OTOKEN"
-    And the file "../home/.config/hub" should have mode "0600"
+    And the file "../home/.config/ghub" should contain "user: MiSlAv"
+    And the file "../home/.config/ghub" should contain "oauth_token: OTOKEN"
+    And the file "../home/.config/ghub" should have mode "0600"
 
   Scenario: Ask for username & password, re-use existing authorization
     Given the GitHub API server:
@@ -41,7 +41,7 @@ Feature: OAuth authentication
         halt 401 unless auth.credentials == %w[mislav kitty]
         json [
           {:token => 'SKIPPD', :note_url => 'http://example.com'},
-          {:token => 'OTOKEN', :note_url => 'http://hub.github.com/'}
+          {:token => 'OTOKEN', :note_url => 'http://ghub.github.com/'}
         ]
       }
       get('/user') {
@@ -51,12 +51,12 @@ Feature: OAuth authentication
         json :full_name => 'mislav/dotfiles'
       }
       """
-    When I run `hub create` interactively
+    When I run `ghub create` interactively
     When I type "mislav"
     And I type "kitty"
     Then the output should contain "github.com password for mislav (never stored):"
     And the exit status should be 0
-    And the file "../home/.config/hub" should contain "oauth_token: OTOKEN"
+    And the file "../home/.config/ghub" should contain "oauth_token: OTOKEN"
 
   Scenario: Re-use existing authorization with an old URL
     Given the GitHub API server:
@@ -66,7 +66,7 @@ Feature: OAuth authentication
         auth = Rack::Auth::Basic::Request.new(env)
         halt 401 unless auth.credentials == %w[mislav kitty]
         json [
-          {:token => 'OTOKEN', :note => 'hub', :note_url => 'http://defunkt.io/hub/'}
+          {:token => 'OTOKEN', :note => 'ghub', :note_url => 'http://defunkt.io/ghub/'}
         ]
       }
       post('/authorizations') {
@@ -81,12 +81,12 @@ Feature: OAuth authentication
         json :full_name => 'mislav/dotfiles'
       }
       """
-    When I run `hub create` interactively
+    When I run `ghub create` interactively
     When I type "mislav"
     And I type "kitty"
     Then the output should contain "github.com password for mislav (never stored):"
     And the exit status should be 0
-    And the file "../home/.config/hub" should contain "oauth_token: OTOKEN"
+    And the file "../home/.config/ghub" should contain "oauth_token: OTOKEN"
 
   Scenario: Re-use existing authorization found on page 3
     Given the GitHub API server:
@@ -99,7 +99,7 @@ Feature: OAuth authentication
           json []
         else
           json [
-            {:token => 'OTOKEN', :note => 'hub', :note_url => 'http://hub.github.com/'}
+            {:token => 'OTOKEN', :note => 'ghub', :note_url => 'http://ghub.github.com/'}
           ]
         end
       }
@@ -115,12 +115,12 @@ Feature: OAuth authentication
         json :full_name => 'mislav/dotfiles'
       }
       """
-    When I run `hub create` interactively
+    When I run `ghub create` interactively
     When I type "mislav"
     And I type "kitty"
     Then the output should contain "github.com password for mislav (never stored):"
     And the exit status should be 0
-    And the file "../home/.config/hub" should contain "oauth_token: OTOKEN"
+    And the file "../home/.config/ghub" should contain "oauth_token: OTOKEN"
 
   Scenario: Credentials from GITHUB_USER & GITHUB_PASSWORD
     Given the GitHub API server:
@@ -130,7 +130,7 @@ Feature: OAuth authentication
         auth = Rack::Auth::Basic::Request.new(env)
         halt 401 unless auth.credentials == %w[mislav kitty]
         json [
-          {:token => 'OTOKEN', :note_url => 'http://hub.github.com/'}
+          {:token => 'OTOKEN', :note_url => 'http://ghub.github.com/'}
         ]
       }
       get('/user') {
@@ -142,9 +142,9 @@ Feature: OAuth authentication
       """
     Given $GITHUB_USER is "mislav"
     And $GITHUB_PASSWORD is "kitty"
-    When I successfully run `hub create`
+    When I successfully run `ghub create`
     Then the output should not contain "github.com password for mislav"
-    And the file "../home/.config/hub" should contain "oauth_token: OTOKEN"
+    And the file "../home/.config/ghub" should contain "oauth_token: OTOKEN"
 
   Scenario: Wrong password
     Given the GitHub API server:
@@ -155,12 +155,12 @@ Feature: OAuth authentication
         halt 401 unless auth.credentials == %w[mislav kitty]
       }
       """
-    When I run `hub create` interactively
+    When I run `ghub create` interactively
     When I type "mislav"
     And I type "WRONG"
     Then the stderr should contain "Error creating repository: Unauthorized (HTTP 401)"
     And the exit status should be 1
-    And the file "../home/.config/hub" should not exist
+    And the file "../home/.config/ghub" should not exist
 
   Scenario: Two-factor authentication, create authorization
     Given the GitHub API server:
@@ -192,14 +192,14 @@ Feature: OAuth authentication
         json :full_name => 'mislav/dotfiles'
       }
       """
-    When I run `hub create` interactively
+    When I run `ghub create` interactively
     When I type "mislav"
     And I type "kitty"
     And I type "112233"
     Then the output should contain "github.com password for mislav (never stored):"
     Then the output should contain "two-factor authentication code:"
     And the exit status should be 0
-    And the file "../home/.config/hub" should contain "oauth_token: OTOKEN"
+    And the file "../home/.config/ghub" should contain "oauth_token: OTOKEN"
 
   Scenario: Two-factor authentication, re-use existing authorization
     Given the GitHub API server:
@@ -218,7 +218,7 @@ Feature: OAuth authentication
         end
         json [ {
           :token => token,
-          :note_url => 'http://hub.github.com/'
+          :note_url => 'http://ghub.github.com/'
           } ]
       }
       get('/user') {
@@ -228,14 +228,14 @@ Feature: OAuth authentication
         json :full_name => 'mislav/dotfiles'
       }
       """
-    When I run `hub create` interactively
+    When I run `ghub create` interactively
     When I type "mislav"
     And I type "kitty"
     And I type "112233"
     Then the output should contain "github.com password for mislav (never stored):"
     Then the output should contain "two-factor authentication code:"
     And the exit status should be 0
-    And the file "../home/.config/hub" should contain "oauth_token: OTOKENSMS"
+    And the file "../home/.config/ghub" should contain "oauth_token: OTOKENSMS"
 
   Scenario: Special characters in username & password
     Given the GitHub API server:
@@ -250,10 +250,10 @@ Feature: OAuth authentication
       }
       get('/repos/mislav/dotfiles') { status 200 }
       """
-    When I run `hub create` interactively
+    When I run `ghub create` interactively
     When I type "mislav@example.com"
     And I type "my pass@phrase ok?"
     Then the output should contain "github.com password for mislav@example.com (never stored):"
     And the exit status should be 0
-    And the file "../home/.config/hub" should contain "user: mislav"
-    And the file "../home/.config/hub" should contain "oauth_token: OTOKEN"
+    And the file "../home/.config/ghub" should contain "user: mislav"
+    And the file "../home/.config/ghub" should contain "oauth_token: OTOKEN"

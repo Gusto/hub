@@ -1,9 +1,9 @@
-module Hub
+module GHub
   # The Args class exists to make it more convenient to work with
-  # command line arguments intended for git from within the Hub
+  # command line arguments intended for git from within the GHub
   # codebase.
   #
-  # The ARGV array is converted into an Args instance by the Hub
+  # The ARGV array is converted into an Args instance by the GHub
   # instance when instantiated.
   class Args < Array
     attr_accessor :executable

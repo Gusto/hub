@@ -2,7 +2,7 @@ require 'shellwords'
 require 'forwardable'
 require 'delegate'
 
-module Hub
+module GHub
   # Methods for inspecting the environment, such as reading git config,
   # repository info, and other.
   module Context
@@ -229,7 +229,7 @@ module Hub
       def known_host?(host)
         default = default_host
         default == host || "ssh.#{default}" == host ||
-          git_config('hub.host', :all).to_s.split("\n").include?(host)
+          git_config('ghub.host', :all).to_s.split("\n").include?(host)
       end
 
       def self.default_host
@@ -467,11 +467,11 @@ module Hub
 
     # legacy setting
     def http_clone?
-      git_config('--bool hub.http-clone') == 'true'
+      git_config('--bool ghub.http-clone') == 'true'
     end
 
     def https_protocol?
-      git_config('hub.protocol') == 'https' or http_clone?
+      git_config('ghub.protocol') == 'https' or http_clone?
     end
 
     def git_alias_for(name)

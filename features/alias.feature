@@ -1,65 +1,65 @@
-Feature: hub alias
+Feature: ghub alias
 
   Scenario: bash instructions
     Given $SHELL is "/bin/bash"
-    When I successfully run `hub alias`
+    When I successfully run `ghub alias`
     Then the output should contain exactly:
       """
       # Wrap git automatically by adding the following to ~/.bash_profile:
 
-      eval "$(hub alias -s)"\n
+      eval "$(ghub alias -s)"\n
       """
 
   Scenario: fish instructions
     Given $SHELL is "/usr/local/bin/fish"
-    When I successfully run `hub alias`
+    When I successfully run `ghub alias`
     Then the output should contain exactly:
       """
       # Wrap git automatically by adding the following to ~/.config/fish/config.fish:
 
-      eval (hub alias -s)\n
+      eval (ghub alias -s)\n
       """
 
   Scenario: zsh instructions
     Given $SHELL is "/bin/zsh"
-    When I successfully run `hub alias`
+    When I successfully run `ghub alias`
     Then the output should contain exactly:
       """
       # Wrap git automatically by adding the following to ~/.zshrc:
 
-      eval "$(hub alias -s)"\n
+      eval "$(ghub alias -s)"\n
       """
 
   Scenario: bash code
     Given $SHELL is "/bin/bash"
-    When I successfully run `hub alias -s`
+    When I successfully run `ghub alias -s`
     Then the output should contain exactly:
       """
-      alias git=hub\n
+      alias git=ghub\n
       """
 
   Scenario: fish code
     Given $SHELL is "/usr/local/bin/fish"
-    When I successfully run `hub alias -s`
+    When I successfully run `ghub alias -s`
     Then the output should contain exactly:
       """
-      alias git=hub\n
+      alias git=ghub\n
       """
 
   Scenario: zsh code
     Given $SHELL is "/bin/zsh"
-    When I successfully run `hub alias -s`
+    When I successfully run `ghub alias -s`
     Then the output should contain exactly:
       """
-      alias git=hub\n
+      alias git=ghub\n
       """
 
   Scenario: unsupported shell
     Given $SHELL is "/bin/zwoosh"
-    When I run `hub alias -s`
+    When I run `ghub alias -s`
     Then the output should contain exactly:
       """
-      hub alias: unsupported shell
+      ghub alias: unsupported shell
       supported shells: bash zsh sh ksh csh fish\n
       """
     And the exit status should be 1

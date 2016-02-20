@@ -1,4 +1,4 @@
-Feature: hub fork
+Feature: ghub fork
   Background:
     Given I am in "dotfiles" git repo
     And the "origin" remote has url "git://github.com/evilchelu/dotfiles.git"
@@ -14,7 +14,7 @@ Feature: hub fork
       get('/repos/mislav/dotfiles', :host_name => 'api.github.com') { 404 }
       post('/repos/evilchelu/dotfiles/forks', :host_name => 'api.github.com') { '' }
       """
-    When I successfully run `hub fork`
+    When I successfully run `ghub fork`
     Then the output should contain exactly "new remote: mislav\n"
     And "git remote add -f mislav git://github.com/evilchelu/dotfiles.git" should be run
     And "git remote set-url mislav git@github.com:mislav/dotfiles.git" should be run
@@ -28,7 +28,7 @@ Feature: hub fork
       get('/repos/mislav/dotfiles', :host_name => 'api.github.com') { 404 }
       post('/repos/evilchelu/dotfiles/forks', :host_name => 'api.github.com') { '' }
       """
-    When I successfully run `hub fork`
+    When I successfully run `ghub fork`
     Then the output should contain exactly "new remote: mislav\n"
     And "git remote add -f mislav ssh://git@github.com/evilchelu/dotfiles.git" should be run
     And "git remote set-url mislav git@github.com:mislav/dotfiles.git" should be run
@@ -39,7 +39,7 @@ Feature: hub fork
       """
       post('/repos/evilchelu/dotfiles/forks') { '' }
       """
-    When I successfully run `hub fork --no-remote`
+    When I successfully run `ghub fork --no-remote`
     Then there should be no output
     And there should be no "mislav" remote
 
@@ -48,7 +48,7 @@ Feature: hub fork
       """
       post('/repos/evilchelu/dotfiles/forks') { halt 500 }
       """
-    When I run `hub fork`
+    When I run `ghub fork`
     Then the exit status should be 1
     And the stderr should contain exactly:
       """
@@ -64,7 +64,7 @@ Feature: hub fork
         json :parent => { :html_url => 'https://github.com/unrelated/dotfiles' }
       }
       """
-    When I run `hub fork`
+    When I run `ghub fork`
     Then the exit status should be 1
     And the stderr should contain exactly:
       """
@@ -79,7 +79,7 @@ Scenario: Related fork already exists
         json :parent => { :html_url => 'https://github.com/evilchelu/dotfiles' }
       }
       """
-    When I run `hub fork`
+    When I run `ghub fork`
     Then the exit status should be 0
     And the url for "mislav" should be "git@github.com:mislav/dotfiles.git"
 
@@ -89,7 +89,7 @@ Scenario: Related fork already exists
       before { halt 401 unless request.env['HTTP_AUTHORIZATION'] == 'token OTOKEN' }
       """
     And I am "mislav" on github.com with OAuth token "WRONGTOKEN"
-    When I run `hub fork`
+    When I run `ghub fork`
     Then the exit status should be 1
     And the stderr should contain exactly:
       """
@@ -102,19 +102,19 @@ Scenario: Related fork already exists
       post('/repos/evilchelu/dotfiles/forks') { '' }
       """
     And HTTPS is preferred
-    When I successfully run `hub fork`
+    When I successfully run `ghub fork`
     Then the output should contain exactly "new remote: mislav\n"
     And the url for "mislav" should be "https://github.com/mislav/dotfiles.git"
 
   Scenario: Not in repo
     Given the current dir is not a repo
-    When I run `hub fork`
+    When I run `ghub fork`
     Then the exit status should be 1
     And the stderr should contain "fatal: Not a git repository"
 
   Scenario: Unknown host
     Given the "origin" remote has url "git@git.my.org:evilchelu/dotfiles.git"
-    When I run `hub fork`
+    When I run `ghub fork`
     Then the exit status should be 1
     And the stderr should contain exactly:
       """
@@ -133,7 +133,7 @@ Scenario: Related fork already exists
     And the "origin" remote has url "git@git.my.org:evilchelu/dotfiles.git"
     And I am "mislav" on git.my.org with OAuth token "FITOKEN"
     And "git.my.org" is a whitelisted Enterprise host
-    When I successfully run `hub fork`
+    When I successfully run `ghub fork`
     Then the url for "mislav" should be "git@git.my.org:mislav/dotfiles.git"
 
   Scenario: Enterprise fork using regular HTTP
@@ -149,5 +149,5 @@ Scenario: Related fork already exists
     And the "origin" remote has url "git@git.my.org:evilchelu/dotfiles.git"
     And I am "mislav" on http://git.my.org with OAuth token "FITOKEN"
     And "git.my.org" is a whitelisted Enterprise host
-    When I successfully run `hub fork`
+    When I successfully run `ghub fork`
     Then the url for "mislav" should be "git@git.my.org:mislav/dotfiles.git"

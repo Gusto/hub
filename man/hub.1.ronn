@@ -1,10 +1,10 @@
-hub(1) -- git + hub = github
+ghub(1) -- git + ghub = github
 ============================
 
 ## SYNOPSIS
 
-`hub` [`--noop`] <COMMAND> <OPTIONS>  
-`hub alias` [`-s`] [<SHELL>]
+`ghub` [`--noop`] <COMMAND> <OPTIONS>  
+`ghub alias` [`-s`] [<SHELL>]
 
 ### Expanded git commands:
 
@@ -32,13 +32,13 @@ hub(1) -- git + hub = github
 
 ## DESCRIPTION
 
-hub enhances various git commands to ease most common workflows with GitHub.
+ghub enhances various git commands to ease most common workflows with GitHub.
 
-  * `hub --noop` <COMMAND>:
+  * `ghub --noop` <COMMAND>:
     Shows which command(s) would be run as a result of the current command.
     Doesn't perform anything.
 
-  * `hub alias` [`-s`] [<SHELL>]:
+  * `ghub alias` [`-s`] [<SHELL>]:
     Shows shell instructions for wrapping git. If given, <SHELL> specifies the
     type of shell; otherwise defaults to the value of SHELL environment
     variable.  With `-s`, outputs shell script suitable for `eval`.
@@ -54,9 +54,9 @@ hub enhances various git commands to ease most common workflows with GitHub.
     your GitHub login.
 
     If the repository is private or the current user has push access to the
-    repository, hub will use the ssh protocol for cloning. Use `-p` to select
+    repository, ghub will use the ssh protocol for cloning. Use `-p` to select
     the ssh protocol unconditionally. HTTPS protocol can be used instead by
-    setting "hub.protocol" (see <CONFIGURATION>).
+    setting "ghub.protocol" (see <CONFIGURATION>).
 
   * `git remote add` [`-p`] <OPTIONS> <USER>[`/`<REPOSITORY>]:
     Add remote "git://github.com/<USER>/<REPOSITORY>.git" as with
@@ -109,7 +109,7 @@ hub enhances various git commands to ease most common workflows with GitHub.
   * `git help`:
     Display enhanced git-help(1).
 
-hub also adds some custom commands that are otherwise not present in git:
+ghub also adds some custom commands that are otherwise not present in git:
 
   * `git create` [<NAME>] [`-p`] [`-d` <DESCRIPTION>] [`-h` <HOMEPAGE>]:
     Create a new public GitHub repository from the current git
@@ -159,7 +159,7 @@ hub also adds some custom commands that are otherwise not present in git:
 
     Issue to pull request conversion via `-i <ISSUE>` or <ISSUE-URL>
     arguments is deprecated and will likely be removed from the future versions
-    of both hub and GitHub API.
+    of both ghub and GitHub API.
 
   * `git ci-status` [`-v`] [<COMMIT>]:
     Looks up the SHA for <COMMIT> in GitHub Status API and displays the latest
@@ -170,26 +170,26 @@ hub also adds some custom commands that are otherwise not present in git:
 
 ## CONFIGURATION
 
-Hub will prompt for GitHub username & password the first time it needs to access
-the API and exchange it for an OAuth token, which it saves in "~/.config/hub".
+GHub will prompt for GitHub username & password the first time it needs to access
+the API and exchange it for an OAuth token, which it saves in "~/.config/ghub".
 
 To avoid being prompted, use <GITHUB_USER> and <GITHUB_PASSWORD> environment
 variables.
 
 If you prefer the HTTPS protocol for GitHub repositories, you can set
-"hub.protocol" to "https". This will affect `clone`, `fork`, `remote add`
+"ghub.protocol" to "https". This will affect `clone`, `fork`, `remote add`
 and other operations that expand references to GitHub repositories as full
 URLs that otherwise use git and ssh protocols.
 
-    $ git config --global hub.protocol https
+    $ git config --global ghub.protocol https
 
 ### GitHub Enterprise
 
-By default, hub will only work with repositories that have remotes which
+By default, ghub will only work with repositories that have remotes which
 point to github.com. GitHub Enterprise hosts need to be whitelisted to
-configure hub to treat such remotes same as github.com:
+configure ghub to treat such remotes same as github.com:
 
-    $ git config --global --add hub.host my.git.org
+    $ git config --global --add ghub.host my.git.org
 
 The default host for commands like `init` and `clone` is still
 github.com, but this can be affected with the <GITHUB_HOST> environment
@@ -203,14 +203,14 @@ variable:
 
 ## BUGS
 
-<https://github.com/github/hub/issues>
+<https://github.com/github/ghub/issues>
 
 ## AUTHORS
 
-<https://github.com/github/hub/contributors>
+<https://github.com/github/ghub/contributors>
 
 ## SEE ALSO
 
 git(1), git-clone(1), git-remote(1), git-init(1),
 <http://github.com>,
-<https://github.com/github/hub>
+<https://github.com/github/ghub>

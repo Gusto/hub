@@ -1,10 +1,10 @@
-Feature: hub am
+Feature: ghub am
   Background:
     Given I am in "git://github.com/mislav/dotfiles.git" git repo
     And I am "mislav" on github.com with OAuth token "OTOKEN"
 
   Scenario: Apply a local patch
-    When I run `hub am some.patch`
+    When I run `ghub am some.patch`
     Then the git command should be unchanged
 
   Scenario: Apply commits from pull request
@@ -15,7 +15,7 @@ Feature: hub am
         generate_patch "Create a README"
       }
       """
-    When I successfully run `hub am -q -3 https://github.com/mislav/dotfiles/pull/387`
+    When I successfully run `ghub am -q -3 https://github.com/mislav/dotfiles/pull/387`
     Then there should be no output
     Then the latest commit message should be "Create a README"
 
@@ -28,7 +28,7 @@ Feature: hub am
         generate_patch "Create a README"
       }
       """
-    When I successfully run `hub am -q https://github.com/mislav/dotfiles/pull/387`
+    When I successfully run `ghub am -q https://github.com/mislav/dotfiles/pull/387`
     Then the latest commit message should be "Create a README"
 
   Scenario: Enterprise repo
@@ -42,7 +42,7 @@ Feature: hub am
         generate_patch "Create a README"
       }
       """
-    When I successfully run `hub am -q -3 https://git.my.org/mislav/dotfiles/pull/387`
+    When I successfully run `ghub am -q -3 https://git.my.org/mislav/dotfiles/pull/387`
     Then the latest commit message should be "Create a README"
 
   Scenario: Apply patch from commit
@@ -53,7 +53,7 @@ Feature: hub am
         generate_patch "Create a README"
       }
       """
-    When I successfully run `hub am -q https://github.com/davidbalbert/dotfiles/commit/fdb9921`
+    When I successfully run `ghub am -q https://github.com/davidbalbert/dotfiles/commit/fdb9921`
     Then the latest commit message should be "Create a README"
 
   Scenario: Apply patch from gist
@@ -71,5 +71,5 @@ Feature: hub am
         generate_patch "Create a README"
       }
       """
-    When I successfully run `hub am -q https://gist.github.com/8da7fb575debd88c54cf`
+    When I successfully run `ghub am -q https://gist.github.com/8da7fb575debd88c54cf`
     Then the latest commit message should be "Create a README"

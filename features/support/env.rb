@@ -7,9 +7,9 @@ lib_dir = File.expand_path('../../../lib', __FILE__)
 bin_dir = File.expand_path('../fakebin', __FILE__)
 
 Before do
-  # don't want hub to run in bundle
+  # don't want ghub to run in bundle
   unset_bundler_env_vars
-  # have bin/hub load code from the current project
+  # have bin/ghub load code from the current project
   set_env 'RUBYLIB', lib_dir
   # speed up load time by skipping RubyGems
   set_env 'RUBYOPT', '--disable-gems' if RUBY_VERSION > '1.9'
@@ -34,8 +34,8 @@ Before do
   # reset current localization settings
   set_env 'LANG', nil
 
-  author_name  = "Hub"
-  author_email = "hub@test.local"
+  author_name  = "GHub"
+  author_email = "ghub@test.local"
   set_env 'GIT_AUTHOR_NAME',     author_name
   set_env 'GIT_COMMITTER_NAME',  author_name
   set_env 'GIT_AUTHOR_EMAIL',    author_email
@@ -113,7 +113,7 @@ World Module.new {
   end
 
   def edit_hub_config
-    config = File.join(ENV['HOME'], '.config/hub')
+    config = File.join(ENV['HOME'], '.config/ghub')
     FileUtils.mkdir_p File.dirname(config)
     if File.exist? config
       data = YAML.load File.read(config)

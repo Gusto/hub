@@ -4,7 +4,7 @@ if defined?(Bundler) && defined?(URI)
 end
 
 require 'minitest/autorun'
-require 'hub'
+require 'ghub'
 
 # We're checking for `open` in our tests
 ENV['BROWSER'] = 'open'
@@ -15,11 +15,11 @@ ENV['PATH'] = "#{fakebin_dir}:#{ENV['PATH']}"
 
 # Use an isolated config file in testing
 tmp_dir = ENV['TMPDIR'] || ENV['TEMP'] || '/tmp'
-ENV['HUB_CONFIG'] = File.join(tmp_dir, 'hub-test-config')
+ENV['HUB_CONFIG'] = File.join(tmp_dir, 'ghub-test-config')
 
 # Disable `abort` and `exit` in the main test process, but allow it in
 # subprocesses where we need to test does a command properly bail out.
-Hub::Commands.extend Module.new {
+GHub::Commands.extend Module.new {
   main_pid = Process.pid
 
   [:abort, :exit].each do |method|
@@ -34,13 +34,13 @@ Hub::Commands.extend Module.new {
 }
 
 class Minitest::Test
-  # Shortcut for creating a `Hub` instance. Pass it what you would
-  # normally pass `hub` on the command line, e.g.
+  # Shortcut for creating a `GHub` instance. Pass it what you would
+  # normally pass `ghub` on the command line, e.g.
   #
-  # shell: hub clone rtomayko/tilt
-  #  test: Hub("clone rtomayko/tilt")
-  def Hub(args)
-    runner = Hub::Runner.new(*args.split(' ').map {|a| a.freeze })
+  # shell: ghub clone rtomayko/tilt
+  #  test: GHub("clone rtomayko/tilt")
+  def GHub(args)
+    runner = GHub::Runner.new(*args.split(' ').map {|a| a.freeze })
     runner.args.commands.each do |cmd|
       if Array === cmd and invalid = cmd.find {|c| !c.respond_to? :to_str }
         raise "#{invalid.inspect} is not a string (in #{cmd.join(' ').inspect})"
@@ -49,17 +49,17 @@ class Minitest::Test
     runner
   end
 
-  # Shortcut for running the `hub` command in a subprocess. Returns
-  # STDOUT as a string. Pass it what you would normally pass `hub` on
+  # Shortcut for running the `ghub` command in a subprocess. Returns
+  # STDOUT as a string. Pass it what you would normally pass `ghub` on
   # the command line, e.g.
   #
-  # shell: hub clone rtomayko/tilt
-  #  test: hub("clone rtomayko/tilt")
+  # shell: ghub clone rtomayko/tilt
+  #  test: ghub("clone rtomayko/tilt")
   #
   # If a block is given it will be run in the child process before
   # execution begins. You can use this to monkeypatch or fudge the
-  # environment before running hub.
-  def hub(args, input = nil)
+  # environment before running ghub.
+  def ghub(args, input = nil)
     parent_read, child_write = IO.pipe
     child_read, parent_write = IO.pipe if input
 
@@ -68,7 +68,7 @@ class Minitest::Test
       $stdin.reopen(child_read) if input
       $stdout.reopen(child_write)
       $stderr.reopen(child_write)
-      Hub(args).execute
+      GHub(args).execute
     end
     
     if input
@@ -79,23 +79,23 @@ class Minitest::Test
     parent_read.read
   end
 
-  # Asserts that `hub` will run a specific git command based on
+  # Asserts that `ghub` will run a specific git command based on
   # certain input.
   #
   # e.g.
-  #  assert_command "clone git/hub", "git clone git://github.com/git/hub.git"
+  #  assert_command "clone git/ghub", "git clone git://github.com/git/ghub.git"
   #
   # Here we are saying that this:
-  #   $ hub clone git/hub
+  #   $ ghub clone git/ghub
   # Should in turn execute this:
-  #   $ git clone git://github.com/git/hub.git
+  #   $ git clone git://github.com/git/ghub.git
   def assert_command(input, expected)
-    assert_equal expected, Hub(input).command, "$ git #{input}"
+    assert_equal expected, GHub(input).command, "$ git #{input}"
   end
 
   def assert_commands(*expected)
     input = expected.pop
-    actual = Hub(input).commands
+    actual = GHub(input).commands
     if expected.size != actual.size
       assert_equal expected, actual
     else
@@ -111,7 +111,7 @@ class Minitest::Test
 
   # Asserts that the command will be forwarded to git without changes
   def assert_forwarded(input)
-    cmd = Hub(input)
+    cmd = GHub(input)
     assert !cmd.args.changed?, "arguments were not supposed to change: #{cmd.args.inspect}"
   end
 
@@ -129,7 +129,7 @@ class Minitest::Test
 
   # Version of assert_equal tailored for big output
   def assert_output(expected, command)
-    output = hub(command) { ENV['GIT'] = 'echo' }
+    output = ghub(command) { ENV['GIT'] = 'echo' }
     assert expected == output,
       "expected:\n#{expected}\ngot:\n#{output}"
   end

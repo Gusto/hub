@@ -1,4 +1,4 @@
-module Hub
+module GHub
   module Standalone
     extend self
 
@@ -9,7 +9,7 @@ module Hub
 # This file is generated code. DO NOT send patches for it.
 #
 # Original source files with comments are at:
-# https://github.com/github/hub
+# https://github.com/github/ghub
 #
 
 preamble
@@ -40,13 +40,13 @@ preamble
         io.puts ''
       end
 
-      io.puts "Hub::Runner.execute(*ARGV)"
+      io.puts "GHub::Runner.execute(*ARGV)"
       io.puts "\n__END__"
-      io << File.read(File.join(HUB_ROOT, 'man/hub.1'))
+      io << File.read(File.join(HUB_ROOT, 'man/ghub.1'))
     end
 
     def each_source_file
-      File.open(File.join(HUB_ROOT, 'lib/hub.rb'), 'r') do |main|
+      File.open(File.join(HUB_ROOT, 'lib/ghub.rb'), 'r') do |main|
         main.each_line do |req|
           if req =~ /^require\s+["'](.+)["']/
             yield File.join(HUB_ROOT, 'lib', "#{$1}.rb")
@@ -58,7 +58,7 @@ preamble
     def detailed_version
       version = `git describe --tags HEAD 2>/dev/null`.chomp
       if version.empty?
-        version = Hub::VERSION
+        version = GHub::VERSION
         head_sha = `git rev-parse --short HEAD 2>/dev/null`.chomp
         version += "-g#{head_sha}" unless head_sha.empty?
         version

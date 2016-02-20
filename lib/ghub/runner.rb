@@ -1,9 +1,9 @@
-module Hub
-  # The Hub runner expects to be initialized with `ARGV` and primarily
+module GHub
+  # The GHub runner expects to be initialized with `ARGV` and primarily
   # exists to run a git command.
   #
   # The actual functionality, that is, the code it runs when it needs to
-  # augment a git command, is kept in the `Hub::Commands` module.
+  # augment a git command, is kept in the `GHub::Commands` module.
   class Runner
     attr_reader :args
     

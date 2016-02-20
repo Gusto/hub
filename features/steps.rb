@@ -1,7 +1,7 @@
 require 'fileutils'
 
 Given(/^HTTPS is preferred$/) do
-  run_silent %(git config --global hub.protocol https)
+  run_silent %(git config --global ghub.protocol https)
 end
 
 Given(/^there are no remotes$/) do
@@ -10,7 +10,7 @@ Given(/^there are no remotes$/) do
 end
 
 Given(/^"([^"]*)" is a whitelisted Enterprise host$/) do |host|
-  run_silent %(git config --global --add hub.host "#{host}")
+  run_silent %(git config --global --add ghub.host "#{host}")
 end
 
 Given(/^git "(.+?)" is set to "(.+?)"$/) do |key, value|
@@ -122,7 +122,7 @@ Given(/^the current dir is not a repo$/) do
 end
 
 Given(/^the GitHub API server:$/) do |endpoints_str|
-  @server = Hub::LocalServer.start_sinatra do
+  @server = GHub::LocalServer.start_sinatra do
     eval endpoints_str, binding
   end
   # hit our Sinatra server instead of github.com
@@ -163,7 +163,7 @@ end
 
 Then(/^the git command should be unchanged$/) do
   expect(@commands).to_not be_empty
-  assert_command_run @commands.last.sub(/^hub\b/, 'git')
+  assert_command_run @commands.last.sub(/^ghub\b/, 'git')
 end
 
 Then(/^the url for "([^"]*)" should be "([^"]*)"$/) do |name, url|
@@ -188,9 +188,9 @@ Then(/^the file "([^"]*)" should have mode "([^"]*)"$/) do |file, expected_mode|
   end
 end
 
-Given(/^the file named "(.+?)" is older than hub source$/) do |file|
+Given(/^the file named "(.+?)" is older than ghub source$/) do |file|
   prep_for_fs_check do
-    time = File.mtime(File.expand_path('../../lib/hub/commands.rb', __FILE__)) - 60
+    time = File.mtime(File.expand_path('../../lib/ghub/commands.rb', __FILE__)) - 60
     File.utime(time, time, file)
   end
 end

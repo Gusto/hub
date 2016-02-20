@@ -1,11 +1,11 @@
-Feature: hub fetch
+Feature: ghub fetch
   Background:
     Given I am in "dotfiles" git repo
     And the "origin" remote has url "git://github.com/evilchelu/dotfiles.git"
     And I am "mislav" on github.com with OAuth token "OTOKEN"
 
   Scenario: Fetch existing remote
-    When I successfully run `hub fetch origin`
+    When I successfully run `ghub fetch origin`
     Then "git fetch origin" should be run
     And there should be no output
 
@@ -14,7 +14,7 @@ Feature: hub fetch
       """
       get('/repos/mislav/dotfiles') { json :private => false }
       """
-    When I successfully run `hub fetch mislav`
+    When I successfully run `ghub fetch mislav`
     Then "git fetch mislav" should be run
     And the url for "mislav" should be "git://github.com/mislav/dotfiles.git"
     And there should be no output
@@ -24,7 +24,7 @@ Feature: hub fetch
       """
       get('/repos/ankit-maverick/dotfiles') { json :private => false }
       """
-    When I successfully run `hub fetch ankit-maverick`
+    When I successfully run `ghub fetch ankit-maverick`
     Then "git fetch ankit-maverick" should be run
     And the url for "ankit-maverick" should be "git://github.com/ankit-maverick/dotfiles.git"
     And there should be no output
@@ -35,7 +35,7 @@ Feature: hub fetch
       get('/repos/mislav/dotfiles') { json :private => false }
       """
     And HTTPS is preferred
-    When I successfully run `hub fetch mislav`
+    When I successfully run `ghub fetch mislav`
     Then "git fetch mislav" should be run
     And the url for "mislav" should be "https://github.com/mislav/dotfiles.git"
 
@@ -44,7 +44,7 @@ Feature: hub fetch
       """
       get('/repos/mislav/dotfiles') { json :private => true }
       """
-    When I successfully run `hub fetch mislav`
+    When I successfully run `ghub fetch mislav`
     Then "git fetch mislav" should be run
     And the url for "mislav" should be "git@github.com:mislav/dotfiles.git"
     And there should be no output
@@ -54,7 +54,7 @@ Feature: hub fetch
       """
       get('/repos/mislav/dotfiles') { json :private => false }
       """
-    When I successfully run `hub fetch --depth=1 mislav`
+    When I successfully run `ghub fetch --depth=1 mislav`
     Then "git fetch --depth=1 mislav" should be run
 
   Scenario: Fetch multiple
@@ -62,7 +62,7 @@ Feature: hub fetch
       """
       get('/repos/:owner/dotfiles') { json :private => false }
       """
-    When I successfully run `hub fetch --multiple mislav rtomayko`
+    When I successfully run `ghub fetch --multiple mislav rtomayko`
     Then "git fetch --multiple mislav rtomayko" should be run
     And the url for "mislav" should be "git://github.com/mislav/dotfiles.git"
     And the url for "rtomayko" should be "git://github.com/rtomayko/dotfiles.git"
@@ -73,7 +73,7 @@ Feature: hub fetch
       get('/repos/mislav/dotfiles') { json :private => false }
       """
     When I successfully run `git config remotes.mygrp "foo bar"`
-    When I successfully run `hub fetch --multiple origin mislav mygrp git://example.com typo`
+    When I successfully run `ghub fetch --multiple origin mislav mygrp git://example.com typo`
     Then "git fetch --multiple origin mislav mygrp git://example.com typo" should be run
     And the url for "mislav" should be "git://github.com/mislav/dotfiles.git"
     But there should be no "mygrp" remote
@@ -84,7 +84,7 @@ Feature: hub fetch
       """
       get('/repos/:owner/dotfiles') { json :private => false }
       """
-    When I successfully run `hub fetch mislav,rtomayko`
+    When I successfully run `ghub fetch mislav,rtomayko`
     Then "git fetch --multiple mislav rtomayko" should be run
     And the url for "mislav" should be "git://github.com/mislav/dotfiles.git"
     And the url for "rtomayko" should be "git://github.com/rtomayko/dotfiles.git"
@@ -94,6 +94,6 @@ Feature: hub fetch
       """
       get('/repos/mislav/dotfiles') { status 404 }
       """
-    When I successfully run `hub fetch mislav`
+    When I successfully run `ghub fetch mislav`
     Then "git fetch mislav" should be run
     And there should be no "mislav" remote

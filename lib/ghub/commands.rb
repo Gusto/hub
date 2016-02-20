@@ -1,6 +1,6 @@
 require 'tempfile'
 
-module Hub
+module GHub
   # The Commands module houses the git commands that hub
   # lovingly wraps. If a method exists here, it is expected to have a
   # corresponding git command which either gets run before or after
@@ -12,11 +12,11 @@ module Hub
   #    $ hub clone rtomayko/tilt
   #
   # 2. The Runner class is initialized:
-  #    >> Hub::Runner.new('clone', 'rtomayko/tilt')
+  #    >> GHub::Runner.new('clone', 'rtomayko/tilt')
   #
   # 3. The method representing the git subcommand is executed with the
   #    full args:
-  #    >> Hub::Commands.clone(['clone', 'rtomayko/tilt'])
+  #    >> GHub::Commands.clone(['clone', 'rtomayko/tilt'])
   #
   # 4. That method rewrites the args as it sees fit:
   #    >> args[1] = "git://github.com/" + args[1] + ".git"
@@ -27,7 +27,7 @@ module Hub
   #
   # An optional `after` callback can be set. If so, it is run after
   # step 5 (which then performs a `system` call rather than an
-  # `exec`). See `Hub::Args` for more information on the `after` callback.
+  # `exec`). See `GHub::Args` for more information on the `after` callback.
   module Commands
     # We are a blank slate.
     instance_methods.each { |m| undef_method(m) unless m =~ /(^__|send|to\?$)/ }
@@ -834,7 +834,7 @@ module Hub
     def hub(args)
       return help(args) unless args[1] == 'standalone'
       require 'hub/standalone'
-      Hub::Standalone.build $stdout
+      GHub::Standalone.build $stdout
       exit
     rescue LoadError
       abort "hub is already running in standalone mode."

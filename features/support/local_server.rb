@@ -2,7 +2,7 @@
 require 'net/http'
 require 'rack/handler/webrick'
 
-module Hub
+module GHub
   class LocalServer
     class Identify < Struct.new(:app)
       def call(env)

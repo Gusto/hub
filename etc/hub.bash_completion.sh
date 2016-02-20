@@ -1,4 +1,4 @@
-# hub tab-completion script for bash.
+# ghub tab-completion script for bash.
 # This script complements the completion script that ships with git.
 
 # Check that git tab completion is available
@@ -7,7 +7,7 @@ if declare -F _git > /dev/null; then
   eval "$(declare -f __git_list_all_commands | \
         sed 's/__git_list_all_commands/__git_list_all_commands_without_hub/')"
 
-  # Wrap the 'list_all_commands' function with extra hub commands
+  # Wrap the 'list_all_commands' function with extra ghub commands
   __git_list_all_commands() {
     cat <<-EOF
 alias
@@ -25,10 +25,10 @@ EOF
   __git_all_commands=""
 
   ##########################
-  # hub command completions
+  # ghub command completions
   ##########################
 
-  # hub alias [-s] [SHELL]
+  # ghub alias [-s] [SHELL]
   _git_alias() {
     local i c=2 s=-s sh shells="bash zsh sh ksh csh fish"
     while [ $c -lt $cword ]; do
@@ -51,7 +51,7 @@ EOF
     __gitcomp "$s $shells"
   }
 
-  # hub browse [-u] [--|[USER/]REPOSITORY] [SUBPAGE]
+  # ghub browse [-u] [--|[USER/]REPOSITORY] [SUBPAGE]
   _git_browse() {
     local i c=2 u=-u repo subpage
     local subpages_="commits issues tree wiki pulls branches stargazers
@@ -92,7 +92,7 @@ EOF
     fi
   }
 
-  # hub compare [-u] [USER[/REPOSITORY]] [[START...]END]
+  # ghub compare [-u] [USER[/REPOSITORY]] [[START...]END]
   _git_compare() {
     local i c=$((cword - 1)) u=-u user remote owner repo arg_repo rev
     while [ $c -gt 1 ]; do
@@ -107,7 +107,7 @@ EOF
             # and revision in the right place, when there is only one argument
             # (other than -u) in the command, that argument will be taken as
             # revision. For example:
-            # $ hub compare -u upstream
+            # $ ghub compare -u upstream
             # > https://github.com/USER/REPO/compare/upstream
             if __hub_github_repos '\p' | grep -Eqx "^$i(/[^/]+)?"; then
               arg_repo=$i
@@ -176,7 +176,7 @@ EOF
     esac
   }
 
-  # hub create [NAME] [-p] [-d DESCRIPTION] [-h HOMEPAGE]
+  # ghub create [NAME] [-p] [-d DESCRIPTION] [-h HOMEPAGE]
   _git_create() {
     local i c=2 name repo flags="-p -d -h"
     while [ $c -lt $cword ]; do
@@ -208,7 +208,7 @@ EOF
     esac
   }
 
-  # hub fork [--no-remote]
+  # ghub fork [--no-remote]
   _git_fork() {
     local i c=2 remote=yes
     while [ $c -lt $cword ]; do
@@ -225,7 +225,7 @@ EOF
     fi
   }
 
-  # hub pull-request [-f] [-m <MESSAGE>|-F <FILE>|-i <ISSUE>|<ISSUE-URL>] [-b <BASE>] [-h <HEAD>]
+  # ghub pull-request [-f] [-m <MESSAGE>|-F <FILE>|-i <ISSUE>|<ISSUE-URL>] [-b <BASE>] [-h <HEAD>]
   _git_pull_request() {
     local i c=2 flags="-f -m -F -i -b -h"
     while [ $c -lt $cword ]; do
@@ -266,14 +266,14 @@ EOF
   ###################
 
   # __hub_github_user [HOST]
-  # Return $GITHUB_USER or the default github user defined in hub config
-  # HOST - Host to be looked-up in hub config. Default is "github.com"
+  # Return $GITHUB_USER or the default github user defined in ghub config
+  # HOST - Host to be looked-up in ghub config. Default is "github.com"
   __hub_github_user() {
     if [ -n "$GITHUB_USER" ]; then
       echo $GITHUB_USER
       return
     fi
-    local line h k v host=${1:-github.com} config=${HUB_CONFIG:-~/.config/hub}
+    local line h k v host=${1:-github.com} config=${HUB_CONFIG:-~/.config/ghub}
     if [ -f "$config" ]; then
       while read line; do
         if [ "$line" = "---" ]; then
@@ -356,7 +356,7 @@ EOF
     fi
   }
 
-  # Enable completion for hub even when not using the alias
-  complete -o bashdefault -o default -o nospace -F _git hub 2>/dev/null \
-    || complete -o default -o nospace -F _git hub
+  # Enable completion for ghub even when not using the alias
+  complete -o bashdefault -o default -o nospace -F _git ghub 2>/dev/null \
+    || complete -o default -o nospace -F _git ghub
 fi

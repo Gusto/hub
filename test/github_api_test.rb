@@ -1,5 +1,5 @@
 require 'helper'
-require 'hub/github_api'
+require 'ghub/github_api'
 require 'forwardable'
 require 'delegate'
 
@@ -8,7 +8,7 @@ class FileStoreTest < Minitest::Test
   def_delegators :@store, :yaml_dump, :yaml_load
 
   def setup
-    @store = Hub::GitHubAPI::FileStore.new('')
+    @store = GHub::GitHubAPI::FileStore.new('')
   end
 
   class OrderedHash < DelegateClass(::Hash)

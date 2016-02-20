@@ -1,4 +1,4 @@
-Feature: hub pull-request
+Feature: ghub pull-request
   Background:
     Given I am in "git://github.com/mislav/coral.git" git repo
     And I am "mislav" on github.com with OAuth token "OTOKEN"
@@ -6,13 +6,13 @@ Feature: hub pull-request
 
   Scenario: Detached HEAD
     Given I am in detached HEAD
-    When I run `hub pull-request`
+    When I run `ghub pull-request`
     Then the stderr should contain "Aborted: not currently on any branch.\n"
     And the exit status should be 1
 
   Scenario: Non-GitHub repo
     Given the "origin" remote has url "mygh:Manganeez/repo.git"
-    When I run `hub pull-request`
+    When I run `ghub pull-request`
     Then the stderr should contain "Aborted: the origin remote doesn't point to a GitHub repository.\n"
     And the exit status should be 1
 
@@ -28,7 +28,7 @@ Feature: hub pull-request
         json :html_url => "https://github.com/Manganeez/repo/pull/12"
       }
       """
-    When I successfully run `hub pull-request -m "here we go"`
+    When I successfully run `ghub pull-request -m "here we go"`
     Then the output should contain exactly "https://github.com/Manganeez/repo/pull/12\n"
 
   Scenario: With Unicode characters
@@ -40,7 +40,7 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -m ăéñøü`
+    When I successfully run `ghub pull-request -m ăéñøü`
     Then the output should contain exactly "the://url\n"
 
   Scenario: With Unicode characters in the changelog
@@ -61,7 +61,7 @@ Feature: hub pull-request
     When I successfully run `git checkout --quiet -b topic`
     Given I make a commit with message "ăéñøü"
     And the "topic" branch is pushed to "origin/topic"
-    When I successfully run `hub pull-request`
+    When I successfully run `ghub pull-request`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Default message for single-commit pull request
@@ -81,7 +81,7 @@ Feature: hub pull-request
     When I successfully run `git checkout --quiet -b topic`
     Given I make a commit with message "This is somewhat of a longish title that does not get wrapped and references #1234"
     And the "topic" branch is pushed to "origin/topic"
-    When I successfully run `hub pull-request`
+    When I successfully run `ghub pull-request`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Deprecated title argument
@@ -92,16 +92,16 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request mytitle`
+    When I successfully run `ghub pull-request mytitle`
     Then the stderr should contain exactly:
       """
-      hub: Specifying pull request title without a flag is deprecated.
+      ghub: Specifying pull request title without a flag is deprecated.
       Please use one of `-m' or `-F' options.\n
       """
     And the stdout should contain exactly "the://url\n"
 
   Scenario: Deprecated title argument can't start with a dash
-    When I run `hub pull-request -help`
+    When I run `ghub pull-request -help`
     Then the stderr should contain "invalid argument: -help\n"
     And the exit status should be 1
 
@@ -110,7 +110,7 @@ Feature: hub pull-request
       """
       post('/repos/origin/coral/pulls') { 404 }
       """
-    When I run `hub pull-request -b origin:master -m here`
+    When I run `ghub pull-request -b origin:master -m here`
     Then the exit status should be 1
     Then the stderr should contain:
       """
@@ -122,11 +122,11 @@ Feature: hub pull-request
     Given the GitHub API server:
       """
       post('/repos/mislav/coral/pulls') {
-        halt 400 unless request.user_agent.include?('Hub')
+        halt 400 unless request.user_agent.include?('GHub')
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -m useragent`
+    When I successfully run `ghub pull-request -m useragent`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Text editor adds title and body
@@ -144,7 +144,7 @@ Feature: hub pull-request
         json :html_url => "https://github.com/mislav/coral/pull/12"
       }
       """
-    When I successfully run `hub pull-request`
+    When I successfully run `ghub pull-request`
     Then the output should contain exactly "https://github.com/mislav/coral/pull/12\n"
     And the file ".git/PULLREQ_EDITMSG" should not exist
 
@@ -171,7 +171,7 @@ Feature: hub pull-request
         json :html_url => "https://github.com/mislav/coral/pull/12"
       }
       """
-    When I successfully run `hub pull-request`
+    When I successfully run `ghub pull-request`
     Then the output should contain exactly "https://github.com/mislav/coral/pull/12\n"
     And the file ".git/PULLREQ_EDITMSG" should not exist
 
@@ -193,7 +193,7 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request`
+    When I successfully run `ghub pull-request`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Failed pull request preserves previous message
@@ -210,7 +210,7 @@ Feature: hub pull-request
         json :html_url => "https://github.com/mislav/coral/pull/12"
       }
       """
-    When I run `hub pull-request`
+    When I run `ghub pull-request`
     Then the exit status should be 1
     And the stderr should contain exactly:
       """
@@ -220,7 +220,7 @@ Feature: hub pull-request
       """
       But this title will prevail
       """
-    When I successfully run `hub pull-request`
+    When I successfully run `ghub pull-request`
     Then the file ".git/PULLREQ_EDITMSG" should not exist
 
   Scenario: Ignore outdated PULLREQ_EDITMSG
@@ -233,20 +233,20 @@ Feature: hub pull-request
       """
     And a file named ".git/PULLREQ_EDITMSG" with:
       """
-      Outdated message from old version of hub
+      Outdated message from old version of ghub
       """
-    Given the file named ".git/PULLREQ_EDITMSG" is older than hub source
+    Given the file named ".git/PULLREQ_EDITMSG" is older than ghub source
     And the text editor adds:
       """
       Added interactively
       """
-    When I successfully run `hub pull-request`
+    When I successfully run `ghub pull-request`
     Then the file ".git/PULLREQ_EDITMSG" should not exist
 
   Scenario: Text editor fails
     Given the text editor exits with error status
     And an empty file named ".git/PULLREQ_EDITMSG"
-    When I run `hub pull-request`
+    When I run `ghub pull-request`
     Then the stderr should contain "error using text editor for pull request message"
     And the exit status should be 1
     And the file ".git/PULLREQ_EDITMSG" should not exist
@@ -268,7 +268,7 @@ Feature: hub pull-request
 
       Multiline, even!
       """
-    When I successfully run `hub pull-request -F pullreq-msg`
+    When I successfully run `ghub pull-request -F pullreq-msg`
     Then the output should contain exactly "https://github.com/mislav/coral/pull/12\n"
     And the file ".git/PULLREQ_EDITMSG" should not exist
 
@@ -281,7 +281,7 @@ Feature: hub pull-request
         json :html_url => "https://github.com/mislav/coral/pull/12"
       }
       """
-    When I run `hub pull-request -F -` interactively
+    When I run `ghub pull-request -F -` interactively
     And I pass in:
       """
       Unix piping is great
@@ -301,13 +301,13 @@ Feature: hub pull-request
         json :html_url => "https://github.com/mislav/coral/pull/12"
       }
       """
-    When I successfully run `hub pull-request -m "I am just a pull\n\nA little pull"`
+    When I successfully run `ghub pull-request -m "I am just a pull\n\nA little pull"`
     Then the output should contain exactly "https://github.com/mislav/coral/pull/12\n"
     And the file ".git/PULLREQ_EDITMSG" should not exist
 
   Scenario: Error when implicit head is the same as base
     Given I am on the "master" branch with upstream "origin/master"
-    When I run `hub pull-request`
+    When I run `ghub pull-request`
     Then the stderr should contain exactly:
       """
       Aborted: head branch is the same as base ("master")
@@ -323,7 +323,7 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -h feature -m message`
+    When I successfully run `ghub pull-request -h feature -m message`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Explicit head with owner
@@ -335,7 +335,7 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -h mojombo:feature -m message`
+    When I successfully run `ghub pull-request -h mojombo:feature -m message`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Explicit base
@@ -347,7 +347,7 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -b develop -m message`
+    When I successfully run `ghub pull-request -b develop -m message`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Implicit base by detecting main branch
@@ -361,7 +361,7 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -m message`
+    When I successfully run `ghub pull-request -m message`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Explicit base with owner
@@ -373,7 +373,7 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -b mojombo:develop -m message`
+    When I successfully run `ghub pull-request -b mojombo:develop -m message`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Explicit base with owner and repo name
@@ -385,13 +385,13 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -b mojombo/coralify:develop -m message`
+    When I successfully run `ghub pull-request -b mojombo/coralify:develop -m message`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Error when there are unpushed commits
     Given I am on the "feature" branch with upstream "origin/feature"
     When I make 2 commits
-    And I run `hub pull-request`
+    And I run `ghub pull-request`
     Then the stderr should contain exactly:
       """
       Aborted: 2 commits are not yet pushed to origin/feature
@@ -408,7 +408,7 @@ Feature: hub pull-request
       }
       """
     When I make 2 commits
-    And I successfully run `hub pull-request -f -m message`
+    And I successfully run `ghub pull-request -f -m message`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Pull request fails on the server
@@ -420,7 +420,7 @@ Feature: hub pull-request
         json(:message => "I haz fail!")
       }
       """
-    When I run `hub pull-request -m message`
+    When I run `ghub pull-request -m message`
     Then the stderr should contain exactly:
       """
       Error creating pull request: Unprocessable Entity (HTTP 422)
@@ -436,7 +436,7 @@ Feature: hub pull-request
         json :html_url => "https://github.com/mislav/coral/pull/92"
       }
       """
-    When I successfully run `hub pull-request -i 92`
+    When I successfully run `ghub pull-request -i 92`
     Then the output should contain exactly:
       """
       https://github.com/mislav/coral/pull/92
@@ -452,7 +452,7 @@ Feature: hub pull-request
         json :html_url => "https://github.com/mislav/coral/pull/92"
       }
       """
-    When I successfully run `hub pull-request https://github.com/mislav/coral/issues/92`
+    When I successfully run `ghub pull-request https://github.com/mislav/coral/issues/92`
     Then the output should contain exactly:
       """
       https://github.com/mislav/coral/pull/92
@@ -471,7 +471,7 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -m enterprisey`
+    When I successfully run `ghub pull-request -m enterprisey`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Enterprise remote witch matching branch but no tracking
@@ -487,7 +487,7 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -m enterprisey`
+    When I successfully run `ghub pull-request -m enterprisey`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Create pull request from branch on the same remote
@@ -503,7 +503,7 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -m hereyougo`
+    When I successfully run `ghub pull-request -m hereyougo`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Create pull request from branch on the personal fork
@@ -519,7 +519,7 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -m hereyougo`
+    When I successfully run `ghub pull-request -m hereyougo`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Create pull request to "upstream" remote
@@ -534,7 +534,7 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -m hereyougo`
+    When I successfully run `ghub pull-request -m hereyougo`
     Then the output should contain exactly "the://url\n"
 
   Scenario: Open pull request in web browser
@@ -544,7 +544,7 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -o -m hereyougo`
+    When I successfully run `ghub pull-request -o -m hereyougo`
     Then "open the://url" should be run
 
   Scenario: Current branch is tracking local branch
@@ -558,5 +558,5 @@ Feature: hub pull-request
         json :html_url => "the://url"
       }
       """
-    When I successfully run `hub pull-request -m hereyougo`
+    When I successfully run `ghub pull-request -m hereyougo`
     Then the output should contain exactly "the://url\n"

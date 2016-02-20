@@ -8,8 +8,8 @@ def command?(util)
   Rake::Task[:load_path].invoke
   context = Object.new
   require 'uri'
-  require 'hub/context'
-  context.extend Hub::Context
+  require 'ghub/context'
+  context.extend GHub::Context
   context.send(:command?, util)
 end
 
@@ -46,11 +46,11 @@ end
 if command? :ronn
   desc "Show man page"
   task :man => "man:build" do
-    exec "man man/hub.1"
+    exec "man man/ghub.1"
   end
 
   desc "Build man pages"
-  task "man:build" => ["man/hub.1", "man/hub.1.html"]
+  task "man:build" => ["man/ghub.1", "man/ghub.1.html"]
 
   extract_examples = lambda { |readme_file|
     # split readme in sections
@@ -70,7 +70,7 @@ if command? :ronn
 
   # generate man page with ronn
   compile_ronn = lambda { |destination, type, contents|
-    File.popen("ronn --pipe --#{type} --organization=GITHUB --manual='Hub Manual'", 'w+') { |io|
+    File.popen("ronn --pipe --#{type} --organization=GITHUB --manual='GHub Manual'", 'w+') { |io|
       io.write contents
       io.close_write
       File.open(destination, 'w') { |f| f << io.read }
@@ -78,14 +78,14 @@ if command? :ronn
     abort "ronn --#{type} conversion failed" unless $?.success?
   }
 
-  file "man/hub.1" => ["man/hub.1.ronn", "README.md"] do |task|
+  file "man/ghub.1" => ["man/ghub.1.ronn", "README.md"] do |task|
     contents = source_with_examples.call(*task.prerequisites)
     compile_ronn.call(task.name, 'roff', contents)
     compile_ronn.call("#{task.name}.html", 'html', contents)
   end
 
-  file "man/hub.1.html" => ["man/hub.1.ronn", "README.md"] do |task|
-    Rake::Task["man/hub.1"].invoke
+  file "man/ghub.1.html" => ["man/ghub.1.ronn", "README.md"] do |task|
+    Rake::Task["man/ghub.1"].invoke
   end
 end
 
@@ -94,34 +94,34 @@ end
 # Build
 #
 
-file "hub" => FileList.new("lib/hub.rb", "lib/hub/*.rb", "man/hub.1") do |task|
+file "ghub" => FileList.new("lib/ghub.rb", "lib/ghub/*.rb", "man/ghub.1") do |task|
   Rake::Task[:load_path].invoke
-  require 'hub/version'
-  require 'hub/standalone'
-  Hub::Standalone.save(task.name)
+  require 'ghub/version'
+  require 'ghub/standalone'
+  GHub::Standalone.save(task.name)
 end
 
 desc "Build standalone script"
-task :standalone => "hub"
+task :standalone => "ghub"
 
 desc %{Install standalone script and man page.
 On Unix-based OS, installs into PREFIX (default: `/usr/local`).
 On Windows, installs into Ruby's main bin directory.}
-task :install => "hub" do
+task :install => "ghub" do
   require 'rbconfig'
   if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
     bindir = RbConfig::CONFIG['bindir']
-    File.open(File.join(bindir, 'hub.bat'), 'w') { |f| f.write('@"ruby.exe" "%~dpn0" %*') }
-    FileUtils.cp 'hub', bindir
+    File.open(File.join(bindir, 'ghub.bat'), 'w') { |f| f.write('@"ruby.exe" "%~dpn0" %*') }
+    FileUtils.cp 'ghub', bindir
   else
     prefix = ENV['PREFIX'] || ENV['prefix'] || '/usr/local'
     prefix = File.join(ENV["DESTDIR"], prefix) if ENV["DESTDIR"]
 
     FileUtils.mkdir_p "#{prefix}/bin"
-    FileUtils.cp "hub", "#{prefix}/bin", :preserve => true
+    FileUtils.cp "ghub", "#{prefix}/bin", :preserve => true
 
     FileUtils.mkdir_p "#{prefix}/share/man/man1"
-    FileUtils.cp "man/hub.1", "#{prefix}/share/man/man1"
+    FileUtils.cp "man/ghub.1", "#{prefix}/share/man/man1"
   end
 end
 
@@ -132,14 +132,14 @@ end
 task :release => [:pages, :gem_release, :homebrew]
 
 desc "Copy files to gh-pages branch, but don't publish"
-task :gh_pages => [:check_dirty, "hub", "man/hub.1.html"] do
-  cp "man/hub.1.html", "html"
+task :gh_pages => [:check_dirty, "ghub", "man/ghub.1.html"] do
+  cp "man/ghub.1.html", "html"
   sh "git checkout gh-pages"
   # replace the specific shebang with a generic ruby one
   sh "echo '#!/usr/bin/env' ruby > standalone"
-  sh "sed 1d hub >> standalone"
-  mv "html", "hub.1.html"
-  sh "git add standalone hub.1.html"
+  sh "sed 1d ghub >> standalone"
+  mv "html", "ghub.1.html"
+  sh "git add standalone ghub.1.html"
   sh "git commit -m 'update standalone'"
 end
 
@@ -156,26 +156,26 @@ end
 
 desc "Publish to Homebrew"
 task :homebrew do
-  require File.expand_path('../lib/hub/version', __FILE__)
+  require File.expand_path('../lib/ghub/version', __FILE__)
   ENV['RUBYOPT'] = ''
   Dir.chdir `brew --prefix`.chomp do
     sh 'git checkout -q master'
     sh 'git pull -q origin master'
 
-    formula_file = 'Library/Formula/hub.rb'
-    sha = `curl -fsSL https://github.com/github/hub/archive/v#{Hub::VERSION}.tar.gz | shasum`.split(/\s+/).first
+    formula_file = 'Library/Formula/ghub.rb'
+    sha = `curl -fsSL https://github.com/github/ghub/archive/v#{GHub::VERSION}.tar.gz | shasum`.split(/\s+/).first
     abort unless $?.success? and sha.length == 40
 
     formula = File.read formula_file
-    formula.sub!(/\bv\d+(\.\d+)*/, "v#{Hub::VERSION}")
+    formula.sub!(/\bv\d+(\.\d+)*/, "v#{GHub::VERSION}")
     formula.sub!(/\b[0-9a-f]{40}\b/, sha)
     File.open(formula_file, 'w') {|f| f << formula }
 
-    branch = "hub-v#{Hub::VERSION}"
+    branch = "ghub-v#{GHub::VERSION}"
     sh "git checkout -q -B #{branch}"
-    sh "git commit -m 'hub #{Hub::VERSION}' -- #{formula_file}"
+    sh "git commit -m 'ghub #{GHub::VERSION}' -- #{formula_file}"
     sh "git push -u mislav #{branch}"
-    sh "hub pull-request -m 'hub #{Hub::VERSION}'"
+    sh "ghub pull-request -m 'ghub #{GHub::VERSION}'"
 
     sh "git checkout -q master"
   end

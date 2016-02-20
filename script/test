@@ -2,7 +2,7 @@
 set -e
 
 STATUS=0
-warnings="${TMPDIR:-/tmp}/hub-warnings.$$"
+warnings="${TMPDIR:-/tmp}/ghub-warnings.$$"
 
 run() {
   # Save warnings on stderr to a separate file

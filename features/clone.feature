@@ -1,4 +1,4 @@
-Feature: hub clone
+Feature: ghub clone
   Background:
     Given I am "mislav" on github.com with OAuth token "OTOKEN"
 
@@ -10,7 +10,7 @@ Feature: hub clone
              :permissions => { :push => false }
       }
       """
-    When I successfully run `hub clone rtomayko/ronn`
+    When I successfully run `ghub clone rtomayko/ronn`
     Then it should clone "git://github.com/rtomayko/ronn.git"
     And there should be no output
 
@@ -22,7 +22,7 @@ Feature: hub clone
              :permissions => { :push => false }
       }
       """
-    When I successfully run `hub clone hookio/hook.js`
+    When I successfully run `ghub clone hookio/hook.js`
     Then it should clone "git://github.com/hookio/hook.js.git"
     And there should be no output
 
@@ -34,13 +34,13 @@ Feature: hub clone
              :permissions => { :push => false }
       }
       """
-    When I successfully run `hub clone zhuangya/.vim`
+    When I successfully run `ghub clone zhuangya/.vim`
     Then it should clone "git://github.com/zhuangya/.vim.git"
     And there should be no output
 
   Scenario: Clone a public repo with HTTPS
     Given HTTPS is preferred
-    When I successfully run `hub clone rtomayko/ronn`
+    When I successfully run `ghub clone rtomayko/ronn`
     Then it should clone "https://github.com/rtomayko/ronn.git"
     And there should be no output
 
@@ -53,51 +53,51 @@ Feature: hub clone
       }
       """
     When I successfully run `git config --global alias.c "clone --bare"`
-    And I successfully run `hub c rtomayko/ronn`
+    And I successfully run `ghub c rtomayko/ronn`
     Then "git clone --bare git://github.com/rtomayko/ronn.git" should be run
     And there should be no output
 
   Scenario: Unchanged public clone
-    When I successfully run `hub clone git://github.com/rtomayko/ronn.git`
+    When I successfully run `ghub clone git://github.com/rtomayko/ronn.git`
     Then the git command should be unchanged
 
   Scenario: Unchanged public clone with path
-    When I successfully run `hub clone git://github.com/rtomayko/ronn.git ronnie`
+    When I successfully run `ghub clone git://github.com/rtomayko/ronn.git ronnie`
     Then the git command should be unchanged
     And there should be no output
 
   Scenario: Unchanged private clone
-    When I successfully run `hub clone git@github.com:rtomayko/ronn.git`
+    When I successfully run `ghub clone git@github.com:rtomayko/ronn.git`
     Then the git command should be unchanged
     And there should be no output
 
   Scenario: Unchanged clone with complex arguments
-    When I successfully run `hub clone --template=one/two git://github.com/defunkt/resque.git --origin master resquetastic`
+    When I successfully run `ghub clone --template=one/two git://github.com/defunkt/resque.git --origin master resquetastic`
     Then the git command should be unchanged
     And there should be no output
 
   Scenario: Unchanged local clone
-    When I successfully run `hub clone ./dotfiles`
+    When I successfully run `ghub clone ./dotfiles`
     Then the git command should be unchanged
     And there should be no output
 
   Scenario: Unchanged local clone with destination
-    When I successfully run `hub clone -l . ../copy`
+    When I successfully run `ghub clone -l . ../copy`
     Then the git command should be unchanged
     And there should be no output
 
   Scenario: Unchanged clone with host alias
-    When I successfully run `hub clone shortcut:git/repo.git`
+    When I successfully run `ghub clone shortcut:git/repo.git`
     Then the git command should be unchanged
     And there should be no output
 
   Scenario: Preview cloning a private repo
-    When I successfully run `hub --noop clone -p rtomayko/ronn`
+    When I successfully run `ghub --noop clone -p rtomayko/ronn`
     Then the output should contain exactly "git clone git@github.com:rtomayko/ronn.git\n"
     But it should not clone anything
 
   Scenario: Clone a private repo
-    When I successfully run `hub clone -p rtomayko/ronn`
+    When I successfully run `ghub clone -p rtomayko/ronn`
     Then it should clone "git@github.com:rtomayko/ronn.git"
     And there should be no output
 
@@ -109,7 +109,7 @@ Feature: hub clone
              :permissions => { :push => true }
       }
       """
-    When I successfully run `hub clone dotfiles`
+    When I successfully run `ghub clone dotfiles`
     Then it should clone "git@github.com:mislav/dotfiles.git"
     And there should be no output
 
@@ -121,7 +121,7 @@ Feature: hub clone
              :permissions => { :push => true }
       }
       """
-    When I successfully run `hub clone --bare -o master dotfiles`
+    When I successfully run `ghub clone --bare -o master dotfiles`
     Then "git clone --bare -o master git@github.com:mislav/dotfiles.git" should be run
     And there should be no output
 
@@ -133,7 +133,7 @@ Feature: hub clone
              :permissions => { :push => true }
       }
       """
-    When I successfully run `hub clone sstephenson/rbenv`
+    When I successfully run `ghub clone sstephenson/rbenv`
     Then "git clone git@github.com:sstephenson/rbenv.git" should be run
     And there should be no output
 
@@ -145,7 +145,7 @@ Feature: hub clone
              :permissions => { :push => true }
       }
       """
-    When I successfully run `hub --noop clone sstephenson/rbenv`
+    When I successfully run `ghub --noop clone sstephenson/rbenv`
     Then the output should contain exactly "git clone git@github.com:sstephenson/rbenv.git\n"
     But it should not clone anything
 
@@ -159,13 +159,13 @@ Feature: hub clone
              :permissions => { :push => false }
       }
       """
-    When I successfully run `hub clone myorg/myrepo`
+    When I successfully run `ghub clone myorg/myrepo`
     Then it should clone "git@git.my.org:myorg/myrepo.git"
     And there should be no output
 
   Scenario: Clone from existing directory is a local clone
     Given a directory named "dotfiles"
-    When I successfully run `hub clone dotfiles`
+    When I successfully run `ghub clone dotfiles`
     Then the git command should be unchanged
     And there should be no output
 
@@ -177,6 +177,6 @@ Feature: hub clone
              :permissions => { :push => false }
       }
       """
-    When I successfully run `hub clone rtomayko/ronn.wiki`
+    When I successfully run `ghub clone rtomayko/ronn.wiki`
     Then it should clone "git://github.com/rtomayko/ronn.wiki.git"
     And there should be no output

@@ -2,7 +2,7 @@ require 'strscan'
 require 'forwardable'
 
 # Stupid pure Ruby JSON parser.
-class Hub::JSON
+class GHub::JSON
   def self.parse(data) new(data).parse end
 
   WSP = /\s+/

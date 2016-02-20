@@ -1,7 +1,7 @@
 #!/bin/bash
 ## If version file is staged to be committed, display the new version number.
 
-version_file="${1:-lib/hub/version.rb}"
+version_file="${1:-lib/ghub/version.rb}"
 
 if git rev-parse --verify HEAD >/dev/null 2>&1; then
   if git diff-index --quiet --cached HEAD -- "$version_file"; then
