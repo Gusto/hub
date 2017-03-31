@@ -130,6 +130,7 @@ module Hub
       force = explicit_owner = false
       base_project = local_repo.main_project
       tracked_branch, head_project = remote_branch_and_project(method(:github_user))
+      use_template = true
 
       unless current_branch
         abort "Aborted: not currently on any branch."
@@ -172,6 +173,8 @@ module Hub
           open_with_browser = true
         when '-r', '--remote'
           options[:remote] = args.shift
+        when '--no-template'
+          use_template = false
         else
           if url = resolve_github_url(arg) and url.project_path =~ /^issues\/(\d+)/
             options[:issue] = $1
@@ -242,7 +245,7 @@ module Hub
           initial_message ||= default_message || `git log --pretty=format:%s HEAD~..HEAD`
           msg.puts initial_message if initial_message
           msg.puts ""
-          msg.puts File.read(pullrequest_template_file) if pullrequest_template_file
+          msg.puts File.read(pullrequest_template_file) if pullrequest_template_file && use_template
           msg.puts ""
           msg.puts "#{cc} Requesting a pull to #{base_project.owner}:#{options[:base]} from #{options[:head]}"
           msg.puts "#{cc}"
