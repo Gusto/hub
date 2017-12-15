@@ -123,10 +123,10 @@ module Hub
       res.body
     end
 
-    def merge_pull_request(project, pr_number, commit_title, commit_message, merge_method='squash')
+    def merge_pull_request(project, pr_number, commit_title, commit_message, sha, merge_method='squash')
       url = "https://%s/repos/%s/%s/pulls/%s/merge" %
         [api_host(project.host), project.owner, project.name, pr_number]
-      res = put url, merge_method: merge_method, commit_title: commit_title, commit_message: commit_message
+      res = put url, merge_method: merge_method, commit_title: commit_title, commit_message: commit_message, sha: sha
       res.error! unless res.success?
       res.data
     end

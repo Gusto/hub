@@ -303,7 +303,6 @@ module Hub
         default_branch = config['default_branch']
       end
 
-
       args.shift
       branch = args.shift || current_branch.short_name
       _, head_project = remote_branch_and_project(method(:github_user))
@@ -322,13 +321,33 @@ module Hub
       end
 
       commit_title, commit_message, pr_number = pr['title'], pr['body'] || '', pr['number']
+      local_sha = local_repo.git_command("rev-parse -q #{branch}")
 
-      api_client.merge_pull_request(
-        base_project,
-        pr_number,
-        commit_title,
-        commit_message
-      )
+      begin
+        api_client.merge_pull_request(
+          base_project,
+          pr_number,
+          commit_title,
+          commit_message,
+          local_sha
+        )
+      rescue GitHubAPI::Exceptions => e
+        response = e.response
+        status = response.status
+        if status == 409
+          $stderr.puts '-' * 80
+          $stderr.puts 'Error landing PR. Local commit sha does not match the Github remote.'
+          $stderr.puts ''
+          $stderr.puts 'You have probably made changes locally:'
+          $stderr.puts ' - push'
+          $stderr.puts ' - wait for ci'
+          $stderr.puts ' - land again'
+          $stderr.puts '-' * 80
+        else
+          display_api_exception("Error merging PR for #{branch}", response)
+        end
+        exit 1
+      end
 
       args.before ['checkout', default_branch]
       args.before ['branch', '-D', branch]
