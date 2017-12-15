@@ -334,18 +334,21 @@ module Hub
       rescue GitHubAPI::Exceptions => e
         response = e.response
         status = response.status
+        $stderr.puts '-' * 80
         if status == 409
-          $stderr.puts '-' * 80
           $stderr.puts 'Error landing PR. Local commit sha does not match the Github remote.'
           $stderr.puts ''
           $stderr.puts 'You have probably made changes locally:'
           $stderr.puts ' - push'
           $stderr.puts ' - wait for ci'
           $stderr.puts ' - land again'
-          $stderr.puts '-' * 80
+        elsif status == 405
+          $stderr.puts 'Error landing PR. Pull Request is not mergeable.'
+          $stderr.puts 'Rebase and resolve conflicts before landing.'
         else
           display_api_exception("Error merging PR for #{branch}", response)
         end
+        $stderr.puts '-' * 80
         exit 1
       end
 
