@@ -320,7 +320,9 @@ module Hub
         exit 1
       end
 
-      commit_title, commit_message, pr_number = pr['title'], pr['body'] || '', pr['number']
+      commit_title = pr['title']
+      commit_message = pr['body'] || ''
+      pr_number = pr['number']
       local_sha = local_repo.git_command("rev-parse -q #{branch}")
 
       begin
