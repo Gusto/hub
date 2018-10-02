@@ -38,7 +38,7 @@ supports hub is available:
 
 ~~~ sh
 # Download or clone the project from GitHub:
-$ git clone git://github.com/github/hub.git
+$ git clone git@github.com:Gusto/hub.git
 $ cd hub
 $ rake install
 ~~~
