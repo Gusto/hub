@@ -175,11 +175,11 @@ module Hub
 
       if options[:assignee]
           params = {
-              :assignee => options[:assignee]
+              :reviewers => options[:assignee].split(',')
           }
 
-          url = res.data['_links']['issue']['href']
-          res = patch url, params
+          url = "#{res.data['_links']['self']['href']}/requested_reviewers"
+          res = post url, params
 
           res.error! unless res.success?
       end
