@@ -356,7 +356,6 @@ module Hub
 
       args.before ['checkout', default_branch]
       args.before ['branch', '-D', branch]
-      args.before ['push', remote, ":#{branch}"]
       args.concat ['pull', remote, default_branch]
       args.after { puts "#{branch} landed!" }
     end
